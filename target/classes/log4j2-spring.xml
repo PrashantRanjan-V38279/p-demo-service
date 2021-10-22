@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Properties>
+		<Property name="serviceName">p-demo</Property>
+		<Property name="fileName">${serviceName}.log</Property>
+		<Property name="fileNamePattern">${serviceName}-log-%d{dd-MM-yyyy}-%i.log</Property>
+		<Property name="fileLogPattern">%d{yyyy-MMM-dd HH:mm:ss.SSS a} [${serviceName}] [%t] %-5level %logger{36} - %msg%n</Property>
+		<Property name="consoleLogPattern">%d{yyyy-MMM-dd HH:mm:ss.SSS a} [${serviceName}] [%t] %-5level %logger{36} - %msg%n</Property>
+	</Properties>
+	<Appenders>
+
+		<!-- Console Appender -->
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="${consoleLogPattern}" />
+		</Console>
+
+		<!-- Rolling File Appender -->
+		<RollingFile name="RollingFile" fileName="${fileName}" filePattern="${fileNamePattern}">
+			<PatternLayout pattern="${fileLogPattern}" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="50MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10" />
+		</RollingFile>
+
+	</Appenders>
+	<Loggers>
+		<Root level="info">
+			<AppenderRef ref="RollingFile" />
+			<AppenderRef ref="Console" />
+		</Root>
+	</Loggers>
+</Configuration>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PAccountController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">p-account-cmdqry-service</a> &gt; <a href="index.source.html" class="el_package">com.aflac.eib.paccountcmdqry.controller</a> &gt; <span class="el_source">PAccountController.java</span></div><h1>PAccountController.java</h1><pre class="source lang-java linenums">package com.aflac.eib.paccountcmdqry.controller;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.aflac.eib.canonical.v2020.apispecific.aflaccanonicalspayload.AflacCanonicalsPayloadVO;
+import com.aflac.eib.lib.constants.CoreConstants;
+import com.aflac.eib.lib.exception.custom.base.ApplicationException;
+import com.aflac.eib.lib.message.http.ApplicationMessageType;
+import com.aflac.eib.lib.message.http.response.ResponseMessageUtility;
+import com.aflac.eib.lib.model.http.response.GeneralResponse;
+import com.aflac.eib.lib.model.selectioncriteria.ConditionGroup;
+import com.aflac.eib.lib.util.HealthCheckUtility;
+import com.aflac.eib.paccountcmdqry.dataparser.PAccountControllerParser;
+import com.aflac.eib.paccountcmdqry.service.PAccountService;
+@Validated
+@SuppressWarnings({&quot;squid:S1452&quot;})
+@RestController
+@RequestMapping(&quot;/v1/&quot;)
+<span class="fc" id="L37">public class PAccountController {</span>
+
+	@Autowired
+	private PAccountService pAccountService;
+
+	@Autowired
+	private ResponseMessageUtility responseMessageUtility;
+
+	@Autowired
+	private HealthCheckUtility healthCheckUtility;
+
+	@Autowired
+	private PAccountControllerParser pAccountControllerParser;
+
+	/**
+	 * this method will fetch all accounts based on selection criteria and other query parameters
+	 * 
+	 * @param aflacIdentityFields
+	 * @param aflacConsumerId
+	 * @param aflacBusinessEvent
+	 * @param selectionCriteria
+	 * @param filter
+	 * @param filterType
+	 * @param pageNumber
+	 * @param pageSize
+	 * @param sortBy
+	 * @param sortOrder
+	 * @return
+	 * @throws ApplicationException
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	@GetMapping(value = &quot;/accounts&quot;, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity&lt;GeneralResponse&lt;AflacCanonicalsPayloadVO&gt;&gt; getAccounts(
+			@RequestHeader(value = CoreConstants.HEADER_IDENTITY_FIELDS, required = false) String aflacIdentityFields,
+			@RequestHeader(value = CoreConstants.HEADER_CONSUMER_ID, required = false) String aflacConsumerId,
+			@RequestHeader(value = CoreConstants.HEADER_BUSINESS_EVENT, required = false) String aflacBusinessEvent,
+			@RequestParam(CoreConstants.QP_SELECTION_CRITERIA) @Valid ConditionGroup conditionGroup,
+			//@RequestParam(value = ServiceConstants.SELECTION_CRITERIA, required = true) String selectionCriteria,
+			@RequestParam(value = CoreConstants.QP_FILTER, required = false) String filter,
+			@RequestParam(value = CoreConstants.QP_FILTER_TYPE, required = false) String filterType,
+			@RequestParam(value = CoreConstants.QP_PAGE_NUMBER, required = false) Integer pageNumber,
+			@RequestParam(value = CoreConstants.QP_PAGE_SIZE, required = false) Integer pageSize,
+			@RequestParam(value = CoreConstants.QP_SORT_BY, required = false) String sortBy,
+			@RequestParam(value = CoreConstants.QP_SORT_ORDER, required = false) String sortOrder)
+			throws ApplicationException {
+
+<span class="fc" id="L83">		MultiValueMap&lt;String, String&gt; queryParams = pAccountControllerParser.getQueryParameters(conditionGroup,</span>
+				filter, filterType, pageNumber, pageSize, sortBy, sortOrder);
+<span class="fc" id="L85">		GeneralResponse&lt;AflacCanonicalsPayloadVO&gt; response = pAccountService.getAccounts(queryParams);</span>
+<span class="fc" id="L86">		return responseMessageUtility.prepareGeneralResponse(HttpStatus.OK,null, GeneralResponse.SUCCESS_RESULT,</span>
+<span class="fc" id="L87">				CoreConstants.GENERIC_SUCCESS_MESSAGE, ApplicationMessageType.INFO, response.getData(),</span>
+<span class="fc" id="L88">				response.getMetadata().getPaginationInfo());  </span>
+
+	}
+	
+	@DeleteMapping(value = &quot;/accounts&quot;, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity&lt;GeneralResponse&lt;Object&gt;&gt; deleteAccounts() {
+<span class="nc" id="L94">		return responseMessageUtility.prepareGeneralResponse(HttpStatus.NOT_IMPLEMENTED, GeneralResponse.SUCCESS_RESULT,</span>
+				CoreConstants.GENERIC_METHOD_NOT_IMPLEMENTED_MESSAGE, ApplicationMessageType.INFO, null);
+	}
+	
+	@PostMapping(value = &quot;/accounts&quot;, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity&lt;GeneralResponse&lt;Object&gt;&gt; putAccounts() {
+<span class="nc" id="L100">		return responseMessageUtility.prepareGeneralResponse(HttpStatus.NOT_IMPLEMENTED, GeneralResponse.SUCCESS_RESULT,</span>
+				CoreConstants.GENERIC_METHOD_NOT_IMPLEMENTED_MESSAGE, ApplicationMessageType.INFO, null);
+	}
+	@PatchMapping(value = &quot;/accounts&quot;, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity&lt;GeneralResponse&lt;Object&gt;&gt; patchAccounts() {
+<span class="nc" id="L105">		return responseMessageUtility.prepareGeneralResponse(HttpStatus.NOT_IMPLEMENTED, GeneralResponse.SUCCESS_RESULT,</span>
+				CoreConstants.GENERIC_METHOD_NOT_IMPLEMENTED_MESSAGE, ApplicationMessageType.INFO, null);
+	}
+
+	/**
+	 * This method will fetch account detail based on specific id
+	 * 
+	 * @param accountId
+	 * @param aflacIdentityFields
+	 * @param aflacCorrelationId
+	 * @param aflacTransactionId
+	 * @param aflacConsumerId
+	 * @param aflacBusinessEvent
+	 * @param filter
+	 * @param filterType
+	 * @return
+	 * @throws ApplicationException
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	@GetMapping(value = &quot;/accounts/{account-id}&quot;, produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
+
+	public ResponseEntity&lt;GeneralResponse&lt;AflacCanonicalsPayloadVO&gt;&gt; getAccountById(@PathVariable(value = &quot;account-id&quot;, required = true) String accountId,
+			@RequestHeader(value = CoreConstants.HEADER_IDENTITY_FIELDS, required = false) String aflacIdentityFields,
+			@RequestHeader(value = CoreConstants.HEADER_CONSUMER_ID, required = false) String aflacConsumerId,
+			@RequestHeader(value = CoreConstants.HEADER_BUSINESS_EVENT, required = false) String aflacBusinessEvent,
+			@RequestParam(value = CoreConstants.QP_FILTER, required = false) String filter,
+			@RequestParam(value = CoreConstants.QP_FILTER_TYPE, required = false) String filterType)
+			throws ApplicationException {
+
+<span class="fc" id="L135">		MultiValueMap&lt;String, String&gt; queryParams = pAccountControllerParser.getQueryParameters(null,</span>
+				filter, filterType, null, null, null, null);
+<span class="fc" id="L137">		AflacCanonicalsPayloadVO response = pAccountService.getAccountById(accountId,queryParams);</span>
+<span class="fc" id="L138">		return responseMessageUtility.prepareGeneralResponse(HttpStatus.OK, GeneralResponse.SUCCESS_RESULT,</span>
+				CoreConstants.GENERIC_SUCCESS_MESSAGE, ApplicationMessageType.INFO, response);
+	}
+
+	@DeleteMapping(value = &quot;/accounts/{account-id}&quot;, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity&lt;GeneralResponse&lt;Object&gt;&gt; deleteAccountById() {
+<span class="nc" id="L144">		return responseMessageUtility.prepareGeneralResponse(HttpStatus.NOT_IMPLEMENTED, GeneralResponse.SUCCESS_RESULT,</span>
+				CoreConstants.GENERIC_METHOD_NOT_IMPLEMENTED_MESSAGE, ApplicationMessageType.INFO, null);
+	}
+	@PutMapping(value = &quot;/accounts/{account-id}&quot;, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity&lt;GeneralResponse&lt;Object&gt;&gt; putAccountById() {
+<span class="nc" id="L149">		return responseMessageUtility.prepareGeneralResponse(HttpStatus.NOT_IMPLEMENTED, GeneralResponse.SUCCESS_RESULT,</span>
+				CoreConstants.GENERIC_METHOD_NOT_IMPLEMENTED_MESSAGE, ApplicationMessageType.INFO, null);
+	}
+	@PatchMapping(value = &quot;/accounts/{account-id}&quot;, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity&lt;GeneralResponse&lt;Object&gt;&gt; patchAccountById() {
+<span class="nc" id="L154">		return responseMessageUtility.prepareGeneralResponse(HttpStatus.NOT_IMPLEMENTED, GeneralResponse.SUCCESS_RESULT,</span>
+				CoreConstants.GENERIC_METHOD_NOT_IMPLEMENTED_MESSAGE, ApplicationMessageType.INFO, null);
+	}
+	
+	@PostMapping(value = &quot;/accounts/actions/{action-id}&quot;, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity&lt;GeneralResponse&lt;Object&gt;&gt; createAccountsByActionId() {
+<span class="nc" id="L160">		return responseMessageUtility.prepareGeneralResponse(HttpStatus.NOT_IMPLEMENTED, GeneralResponse.SUCCESS_RESULT,</span>
+				CoreConstants.GENERIC_METHOD_NOT_IMPLEMENTED_MESSAGE, ApplicationMessageType.INFO, null);
+	}
+	
+	@PostMapping(value = &quot;/accounts/{account-id}/actions/{action-id}&quot;, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity&lt;GeneralResponse&lt;Object&gt;&gt; createAccountsByAccountIdAndActionId() {
+<span class="nc" id="L166">		return responseMessageUtility.prepareGeneralResponse(HttpStatus.NOT_IMPLEMENTED, GeneralResponse.SUCCESS_RESULT,</span>
+				CoreConstants.GENERIC_METHOD_NOT_IMPLEMENTED_MESSAGE, ApplicationMessageType.INFO, null);
+	}
+
+	/**
+	 * This method will be used for health check of service
+	 * 
+	 * @param httpRequest
+	 * @return
+	 */
+	@GetMapping(path = &quot;/health&quot;, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity&lt;GeneralResponse&lt;?&gt;&gt; getHealthCheck(HttpServletRequest httpRequest) {
+
+<span class="fc" id="L179">		return healthCheckUtility.doHealthCheck(httpRequest);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

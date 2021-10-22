@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PAccountServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">p-account-cmdqry-service</a> &gt; <a href="index.source.html" class="el_package">com.aflac.eib.paccountcmdqry.service.impl</a> &gt; <span class="el_source">PAccountServiceImpl.java</span></div><h1>PAccountServiceImpl.java</h1><pre class="source lang-java linenums">package com.aflac.eib.paccountcmdqry.service.impl;
+
+import java.net.URI;
+import java.util.Collections;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import com.aflac.eib.canonical.v2020.apispecific.aflaccanonicalspayload.AflacCanonicalsPayloadVO;
+import com.aflac.eib.lib.exception.custom.base.ApplicationException;
+import com.aflac.eib.lib.model.http.response.GeneralResponse;
+import com.aflac.eib.lib.resttemplate.RestTemplateUtility;
+import com.aflac.eib.paccountcmdqry.service.PAccountService;
+
+@SuppressWarnings({&quot;squid:S1452&quot;,&quot;squid:S2293&quot;})
+@org.springframework.stereotype.Service
+<span class="fc" id="L25">public class PAccountServiceImpl implements PAccountService {</span>
+
+	@Autowired
+	private RestTemplateUtility restTemplateUtility;
+
+	@Value(&quot;${app.s-account-hub.service.url.accounts}&quot;)
+	private String accountHubUrl;
+	
+	@Value(&quot;${app.s-account-hub.service.url.account-id}&quot;)
+	private String accountByIdHubUrl;
+
+	@Override
+	public GeneralResponse&lt;AflacCanonicalsPayloadVO&gt; getAccounts(MultiValueMap&lt;String, String&gt; queryParams) throws ApplicationException {
+<span class="fc" id="L38">		ResponseEntity&lt;GeneralResponse&lt;AflacCanonicalsPayloadVO&gt;&gt; responseEntity = null;</span>
+
+<span class="fc" id="L40">		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(accountHubUrl).queryParams(queryParams);</span>
+<span class="fc" id="L41">		URI uri = builder.build().encode().toUri();</span>
+<span class="fc" id="L42">		responseEntity = restTemplateUtility.exchange(uri, HttpMethod.GET, getHttpHeader(),</span>
+<span class="fc" id="L43">				new ParameterizedTypeReference&lt;GeneralResponse&lt;AflacCanonicalsPayloadVO&gt;&gt;() {</span>
+<span class="fc" id="L44">				}, true);</span>
+<span class="fc" id="L45">		return responseEntity.getBody();</span>
+	}
+
+	@Override
+	public AflacCanonicalsPayloadVO getAccountById(String accountId,MultiValueMap&lt;String, String&gt; queryParams) throws ApplicationException {
+<span class="fc" id="L50">		Object[] pathParams = { accountId };</span>
+<span class="fc" id="L51">		URI uri = UriComponentsBuilder.fromUriString(accountByIdHubUrl).buildAndExpand(pathParams).toUri();</span>
+<span class="fc" id="L52">		uri = UriComponentsBuilder.fromUri(uri).build().toUri();</span>
+
+<span class="fc" id="L54">		ResponseEntity&lt;GeneralResponse&lt;AflacCanonicalsPayloadVO&gt;&gt; response = restTemplateUtility.exchange(uri, HttpMethod.GET, getHttpHeader(),</span>
+<span class="fc" id="L55">				new ParameterizedTypeReference&lt;GeneralResponse&lt;AflacCanonicalsPayloadVO&gt;&gt;() {</span>
+<span class="fc" id="L56">				}, true);</span>
+
+<span class="fc" id="L58">		return response.getBody().getData();</span>
+	}
+
+	private HttpEntity&lt;Object&gt; getHttpHeader() {
+<span class="fc" id="L62">		HttpHeaders headers = new HttpHeaders();</span>
+<span class="fc" id="L63">		headers.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="fc" id="L64">		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));</span>
+<span class="fc" id="L65">		return new HttpEntity&lt;Object&gt;(headers);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

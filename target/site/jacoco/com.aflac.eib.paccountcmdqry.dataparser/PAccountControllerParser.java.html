@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PAccountControllerParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">p-account-cmdqry-service</a> &gt; <a href="index.source.html" class="el_package">com.aflac.eib.paccountcmdqry.dataparser</a> &gt; <span class="el_source">PAccountControllerParser.java</span></div><h1>PAccountControllerParser.java</h1><pre class="source lang-java linenums">package com.aflac.eib.paccountcmdqry.dataparser;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
+
+import com.aflac.eib.lib.constants.CoreConstants;
+import com.aflac.eib.lib.exception.custom.base.ApplicationException;
+import com.aflac.eib.lib.model.selectioncriteria.ConditionGroup;
+import com.aflac.eib.lib.util.SelectionCriteriaUtility;
+
+@Component
+<span class="fc" id="L15">public class PAccountControllerParser {</span>
+	
+	@Autowired
+	private SelectionCriteriaUtility selectionCriteriaUtility;
+
+	/**
+	 * This method will add all input parameter in MultiValueMap
+	 * 
+	 * @param selectionCriteria
+	 * @param filter
+	 * @param filterType
+	 * @param pageNumber
+	 * @param pageSize
+	 * @param sortBy
+	 * @param sortOrder
+	 * @return
+	 * @throws ApplicationException 
+	 */
+	public MultiValueMap&lt;String, String&gt; getQueryParameters(ConditionGroup conditionGroup, String filter, String filterType,
+			Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) throws ApplicationException {
+<span class="fc" id="L35">		MultiValueMap&lt;String, String&gt; parameters = new LinkedMultiValueMap&lt;&gt;();</span>
+
+<span class="fc bfc" id="L37" title="All 2 branches covered.">		if (!StringUtils.isEmpty(conditionGroup)) {</span>
+<span class="fc" id="L38">			parameters.add(CoreConstants.QP_SELECTION_CRITERIA, selectionCriteriaUtility.toJsonString(conditionGroup));</span>
+		}
+<span class="fc bfc" id="L40" title="All 2 branches covered.">		if (!StringUtils.isEmpty(filter)) {</span>
+<span class="fc" id="L41">			parameters.add(CoreConstants.QP_FILTER, filter);</span>
+		}
+<span class="fc bfc" id="L43" title="All 2 branches covered.">		if (!StringUtils.isEmpty(filterType)) {</span>
+<span class="fc" id="L44">			parameters.add(CoreConstants.QP_FILTER_TYPE, filterType);</span>
+		}
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">		if (null !=pageNumber) {</span>
+<span class="fc" id="L47">			parameters.add(CoreConstants.QP_PAGE_NUMBER, pageNumber.toString());</span>
+		}
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">		if (null !=pageSize) {</span>
+<span class="fc" id="L50">			parameters.add(CoreConstants.QP_PAGE_SIZE, pageSize.toString());</span>
+		}
+<span class="fc bfc" id="L52" title="All 2 branches covered.">		if (!StringUtils.isEmpty(sortOrder)) {</span>
+<span class="fc" id="L53">			parameters.add(CoreConstants.QP_SORT_ORDER, sortOrder);</span>
+		}
+<span class="fc bfc" id="L55" title="All 2 branches covered.">		if (!StringUtils.isEmpty(sortBy)) {</span>
+<span class="fc" id="L56">			parameters.add(CoreConstants.QP_SORT_BY, sortBy);</span>
+		}
+
+<span class="fc" id="L59">		return parameters;</span>
+	}
+	
+	/**
+	 * 
+	 * This method will  return ann header parameter after validation in MultiValueMap.
+	 * @param aflacIdentityFields
+	 * @param aflacCorrelationId
+	 * @param aflacTransactionId
+	 * @param aflacConsumerId
+	 * @param aflacBusinessEvent
+	 * @return
+	 */
+	public MultiValueMap&lt;String, String&gt; getHeaderParameters(String aflacIdentityFields,
+			 String aflacConsumerId, String aflacBusinessEvent){
+<span class="fc" id="L74">		MultiValueMap&lt;String, String&gt; parameters = new LinkedMultiValueMap&lt;&gt;();</span>
+		
+<span class="fc bfc" id="L76" title="All 2 branches covered.">		if (!StringUtils.isEmpty(aflacIdentityFields)) {</span>
+<span class="fc" id="L77">			parameters.add(CoreConstants.HEADER_IDENTITY_FIELDS, aflacIdentityFields);</span>
+		}
+<span class="fc bfc" id="L79" title="All 2 branches covered.">		if (!StringUtils.isEmpty(aflacConsumerId)) {</span>
+<span class="fc" id="L80">			parameters.add(CoreConstants.HEADER_CONSUMER_ID, aflacConsumerId);</span>
+		}
+<span class="fc bfc" id="L82" title="All 2 branches covered.">		if (!StringUtils.isEmpty(aflacBusinessEvent)) {</span>
+<span class="fc" id="L83">			parameters.add(CoreConstants.HEADER_BUSINESS_EVENT, aflacBusinessEvent);</span>
+		}
+		
+<span class="fc" id="L86">		return parameters;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
