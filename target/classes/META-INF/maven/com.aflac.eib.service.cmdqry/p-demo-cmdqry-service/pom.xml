@@ -23,7 +23,7 @@
        <sonar.coverage.exclusions>
 			src/main/java/com/aflac/eib/demo/config/**/*,
 			src/main/java/com/aflac/eib/demo/exception/**/*,
-			src/main/java/com/aflac/eib/demo/PAccountApplication.java
+			src/main/java/com/aflac/eib/demo/PDemoApplication.java
 		</sonar.coverage.exclusions>
 		<sonar.dynamic>reuseReports</sonar.dynamic>
 
